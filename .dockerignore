@@ -3,4 +3,4 @@
 media/
 venv/
 site_transfer.tgz
-toolkit/settings.py
+# toolkit/settings.py
