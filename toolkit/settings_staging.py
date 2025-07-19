@@ -1,3 +1,4 @@
+import os
 from toolkit.settings_common import *
 
 # environment values are passed in from docker
