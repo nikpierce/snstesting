@@ -8,7 +8,7 @@ from invoke.exceptions import Exit
 IMAGE_REPOSITORY = "toolkit"
 IMAGE_BUILD_DIR = "tmp_toolkit_deploy_{}"
 
-DEFAULT_HOST = "feeldsparror.cubecinema.com"
+DEFAULT_HOST = "cubecinema.com"
 
 
 def _assert_target_set(c):
