@@ -15,6 +15,17 @@ services:
       - "127.0.0.1:7192:8000"
     environment:
       NO_REDIS: "true"
+      DB_NAME: "${DB_NAME}"
+      DB_USER: "${DB_USER}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_HOST: "toolkit-${ENV}-mariadb"
+      DB_PORT: "3306"
+      SECRET_KEY: "${DJANGO_SECRET_KEY:-really_bad_django_secret_key}"
+      EMAIL_HOST: "${EMAIL_HOST}"
+      EMAIL_PORT: "${EMAIL_PORT}"
+      EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
+      EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
+
     volumes:
       - type: bind
         source: /home/staging/site/media/
@@ -22,6 +33,4 @@ services:
       - type: bind
         source: /var/run/mysqld/mysqld.sock
         target: /var/run/mysqld/mysqld.sock
-      - type: bind
-        source: /home/staging/settings_docker_staging.py
-        target: /site/toolkit/settings.py
+
