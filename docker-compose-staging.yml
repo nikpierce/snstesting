@@ -3,6 +3,24 @@ networks:
   toolkit_staging:
     driver: bridge
 services:
+  mariadb:
+    image: mariadb:10
+    container_name: toolkit-${ENV}-mariadb
+    networks:
+      - toolkit_staging
+    environment:
+      MARIADB_DATABASE: "${DB_NAME}"
+      MARIADB_USER: "${DB_USER}"
+      MARIADB_PASSWORD: "${DB_PASSWORD}"
+      MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+    volumes:
+      - type: bind
+        source: ./data/docker-entrypoint-initdb.d/
+        target: /docker-entrypoint-initdb.d/   ## scripts run during startup of new containers.
+      - type: bind
+        source: ./data/mariadb
+        target: /var/lib/mysql
+
   toolkit:
     user: "1002:1002"
     networks:
@@ -12,7 +30,7 @@ services:
     command: ["tk_run", "gunicorn"]
     restart: on-failure
     ports:
-      - "127.0.0.1:7192:8000"
+      - "127.0.0.1:8003:8000"
     environment:
       NO_REDIS: "true"
       DB_NAME: "${DB_NAME}"
@@ -28,9 +46,5 @@ services:
 
     volumes:
       - type: bind
-        source: /home/staging/site/media/
+        source: ./data/media/
         target: /site/media/
-      - type: bind
-        source: /var/run/mysqld/mysqld.sock
-        target: /var/run/mysqld/mysqld.sock
-

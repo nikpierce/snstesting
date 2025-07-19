@@ -66,5 +66,4 @@ ssh "$REMOTE_SERVER" "ln -s settings_'$DEPLOY_ENV'.py '$CHECKOUT_DIR'/toolkit/se
 # --no-cache to make sure updated filesystems are added, etc
 ssh "$REMOTE_SERVER" "cd '$CHECKOUT_DIR' && docker build --no-cache --tag toolkit:'$DEPLOY_ENV' ."
 
-#ssh "$REMOTE_SERVER" "cd '$DOCKER_COMPOSE_DIR' && docker-compose up --detach"
-
+ssh "$REMOTE_SERVER" "cd '$DOCKER_COMPOSE_DIR' && docker compose up --detach"
