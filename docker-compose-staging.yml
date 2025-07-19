@@ -1,13 +1,7 @@
-version: "3.7"
-networks:
-  toolkit_staging:
-    driver: bridge
 services:
   mariadb:
     image: mariadb:10
     container_name: toolkit-${ENV}-mariadb
-    networks:
-      - toolkit_staging
     environment:
       MARIADB_DATABASE: "${DB_NAME}"
       MARIADB_USER: "${DB_USER}"
@@ -22,11 +16,8 @@ services:
         target: /var/lib/mysql
 
   toolkit:
-    user: "1002:1002"
-    networks:
-      - toolkit_staging
-    image: toolkit:staging
-    build: .
+    image: toolkit:${ENV}
+    container_name: toolkit-${ENV}-app
     command: ["tk_run", "gunicorn"]
     restart: on-failure
     ports:
@@ -43,7 +34,6 @@ services:
       EMAIL_PORT: "${EMAIL_PORT}"
       EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
       EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
-
     volumes:
       - type: bind
         source: ./data/media/
