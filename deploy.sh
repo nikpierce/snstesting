@@ -59,11 +59,8 @@ rm ./$ARCHIVE_FILE
 ssh "$REMOTE_SERVER" "rm -Rf '$CHECKOUT_DIR'/*"
 ssh "$REMOTE_SERVER" "tar -xzf '$TOOLKIT_BASE_DIR'/tmp/'$ARCHIVE_FILE' -C '$CHECKOUT_DIR'"
 
-# any tweaks ahead of building the image
-ssh "$REMOTE_SERVER" "ln -s settings_'$DEPLOY_ENV'.py '$CHECKOUT_DIR'/toolkit/settings.py"
-
 # docker build # TODO: investigate if docker copmpose build makes sense
 # --no-cache to make sure updated filesystems are added, etc
-ssh "$REMOTE_SERVER" "cd '$CHECKOUT_DIR' && docker build --no-cache --tag toolkit:'$DEPLOY_ENV' ."
+ssh "$REMOTE_SERVER" "cd '$CHECKOUT_DIR' && docker build --build-arg ENV_NAME=$DEPLOY_ENV --no-cache --tag toolkit:'$DEPLOY_ENV' ."
 
 ssh "$REMOTE_SERVER" "cd '$DOCKER_COMPOSE_DIR' && docker compose up --detach"

@@ -1,5 +1,8 @@
 FROM debian:bookworm AS base
 
+## passed in from commandline
+ARG ENV_NAME
+
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && apt-get install --yes --no-install-recommends \
   python3 \
@@ -43,6 +46,7 @@ RUN adduser --no-create-home --disabled-login --gecos x toolkit \
 COPY --chown=toolkit:toolkit . /site/
 
 RUN ln -s /site/containerconfig/tk_run.sh /usr/local/bin/tk_run \
+     && ln -s /site/toolkit/settings_$ENV_NAME.py /site/toolkit/settings.py \
      && SECRET_KEY="X" /venv/bin/python3 /site/manage.py collectstatic --noinput --settings=toolkit.settings \
      && install -D --owner=toolkit --group=toolkit --directory /site/media/diary \
      && install -D --owner=toolkit --group=toolkit --directory /site/media/documents \
