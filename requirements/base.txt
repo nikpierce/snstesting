@@ -17,3 +17,7 @@ monthdelta
 # Instead we ensure that the corresponding OS package is installed, and the
 # virtualenv is created with --system-site-packages
 # mysqlclient
+
+mysqlclient==2.1.0
+gunicorn==23.0.0
+

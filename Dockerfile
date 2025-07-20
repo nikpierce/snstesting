@@ -29,7 +29,7 @@ WORKDIR "/build"
 COPY ./requirements ./requirements/
 
 RUN mkdir --parents /build/wheels/ \
-    && pip wheel --wheel-dir /build/wheels/ -r /build/requirements/docker.txt
+    && pip wheel --wheel-dir /build/wheels/ -r /build/requirements/$ENV_NAME.txt
 
 ## Deployment image
 FROM base AS run
