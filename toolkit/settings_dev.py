@@ -1,40 +1,61 @@
 import os
-
+import warnings
 from toolkit.settings_common import *
 
-ALLOWED_HOSTS = ["localhost"]
+# environment values are passed in from docker
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.environ.get("DB_NAME", "toolkit"),
-        "USER": os.environ.get("DB_USER", "toolkit"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "devserver_db_password"),
-        "HOST": os.environ.get("DB_HOST", "mysql"),
-        "PORT": os.environ.get("DB_PORT", "3306"),
-        "CONN_MAX_AGE": 10,  # Allow DB connections to persist for 10 seconds
-        "OPTIONS": {
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get("DB_NAME"),
+        'USER': os.environ.get("DB_USER"),
+        'PASSWORD': os.environ.get("DB_PASSWORD"),
+        'HOST': os.environ.get("DB_HOST"), 
+        'PORT': os.environ.get("DB_PORT"),
+        'CONN_MAX_AGE': 10, # Allow DB connections to persist for 10 seconds
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# Make this unique, and don't share it with anybody.
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 # Disable the log file
 del LOGGING["handlers"]["file"]
 LOGGING["loggers"]["toolkit"]["handlers"] = ["console"]
 
-# Instead enable logging to the console (configured in settings_common.py)
+# Enable logging of *everything* to the console:
 LOGGING["root"] = {
-    "handlers": ["console", "mail_admins"],
+    "handlers": ["console"],
     "level": "DEBUG",
 }
 
-# The following are the lucky recipients of error emails
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
+# Override setting in settings_common
+VENUE["email_unsubcribe_host"] = "localhost:8000"
 
-SERVER_EMAIL = "toolkit_errors@cubecinema.com"
+# Enable Debug mode, add in Django toolbar:
+DEBUG = True
+TEMPLATES[0]["OPTIONS"]["debug"] = True
+
+ALLOWED_HOSTS = ("127.0.0.1", "localhost")
+
+# Django toolbar things:
+INTERNAL_IPS = ("127.0.0.1",)
+DEBUG_TOOLBAR_CONFIG = {
+    "INTERCEPT_REDIRECTS": False,
+}
+
+MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+INSTALLED_APPS = list(INSTALLED_APPS)
+INSTALLED_APPS.append("debug_toolbar")
+
+CRISPY_FAIL_SILENTLY = False
+
+warnings.filterwarnings(
+    "error",
+    r"DateTimeField received a naive datetime",
+    RuntimeWarning,
+    r"django\.db\.models\.fields",
+)

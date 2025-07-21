@@ -1,6 +1,7 @@
 .git
 .tox
 media/
+var/
 venv/
 site_transfer.tgz
 toolkit/settings.py
