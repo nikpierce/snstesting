@@ -50,7 +50,8 @@ DEPLOY_ENV=dev
 
 # docker build # TODO: investigate if docker copmpose build makes sense
 # add --no-cache to make sure updated filesystems are added, etc. remove to significantly speed up build.
-docker build --build-arg ENV_NAME=$DEPLOY_ENV --tag toolkit:"$DEPLOY_ENV" .
+# pass in the $UID of the current user to re-use as internal uid, for bind mounts
+docker build --build-arg ENV_NAME="$DEPLOY_ENV" --build-arg TOOLKIT_UID="$UID" --tag toolkit:"$DEPLOY_ENV" .
 
 # --detach
-docker compose -f ./docker-compose-$DEPLOY_ENV.yml up
+docker compose -f ./docker-compose-"$DEPLOY_ENV".yml up

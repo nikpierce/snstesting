@@ -61,6 +61,7 @@ ssh "$REMOTE_SERVER" "tar -xzf '$TOOLKIT_BASE_DIR'/tmp/'$ARCHIVE_FILE' -C '$CHEC
 
 # docker build # TODO: investigate if docker copmpose build makes sense
 # --no-cache to make sure updated filesystems are added, etc
-ssh "$REMOTE_SERVER" "cd '$CHECKOUT_DIR' && docker build --build-arg ENV_NAME=$DEPLOY_ENV --no-cache --tag toolkit:'$DEPLOY_ENV' ."
+# pass in hardcoded UID of the toolkit user to simplify bind mount things. If someone wants to make this fancy and dynamic go for it
+ssh "$REMOTE_SERVER" "cd '$CHECKOUT_DIR' && docker build --build-arg ENV_NAME=$DEPLOY_ENV --build-arg TOOLKIT_UID=1004 --no-cache --tag toolkit:'$DEPLOY_ENV' ."
 
 ssh "$REMOTE_SERVER" "cd '$DOCKER_COMPOSE_DIR' && docker compose up --detach"

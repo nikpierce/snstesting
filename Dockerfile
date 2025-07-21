@@ -2,6 +2,7 @@ FROM debian:bookworm AS base
 
 ## passed in from commandline
 ARG ENV_NAME
+ARG TOOLKIT_UID
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && apt-get install --yes --no-install-recommends \
@@ -43,7 +44,8 @@ RUN python3 -m venv /venv \
 
 COPY . /site/
 RUN ln -s /site/toolkit/settings_$ENV_NAME.py /site/toolkit/settings.py
-RUN adduser --no-create-home --disabled-login --gecos x toolkit
+## create container account with UID+GID of server account or localhost user
+RUN adduser --uid $TOOLKIT_UID --no-create-home --disabled-login --gecos x toolkit
 RUN chown -R toolkit:toolkit /site/ \
      && install -D --owner=toolkit --group=toolkit --directory /site/media/diary \
      && install -D --owner=toolkit --group=toolkit --directory /site/media/documents \
