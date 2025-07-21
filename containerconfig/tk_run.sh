@@ -19,6 +19,7 @@ case "$COMMAND" in
     gunicorn)
         echo "Running database migrations"
         /venv/bin/python3 /site/manage.py migrate
+        SECRET_KEY="X" /venv/bin/python3 /site/manage.py collectstatic --noinput --settings=toolkit.settings
         exec /venv/bin/gunicorn wsgi --bind 0.0.0.0:8000 --chdir /site
         ;;
     mailerd)

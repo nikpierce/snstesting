@@ -17,9 +17,7 @@ services:
 
   toolkit:
     image: toolkit:dev
-    command: ["tk_run", "gunicorn"]
     container_name: toolkit_dev_app
-#    command: ["/bin/bash"]
     restart: on-failure
     environment:
       DB_NAME: "${DB_NAME:-toolkit}"

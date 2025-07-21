@@ -9,7 +9,6 @@ services:
       - toolkit_production
     image: toolkit:production
     build: .
-    command: ["tk_run", "gunicorn"]
     restart: on-failure
     ports:
       - "127.0.0.1:7191:8000"
@@ -28,7 +27,7 @@ services:
     networks:
       - toolkit_production
     image: toolkit:production
-    command: ["tk_run", "mailerd"]
+    command: ["mailerd"]  ## override default ENTRYPOINT/CMD argument in Dockerfile
     restart: on-failure
     volumes:
       - type: bind
