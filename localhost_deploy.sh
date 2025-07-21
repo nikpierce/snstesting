@@ -13,6 +13,7 @@
 # rsync -avz feeldsparror.cubecinema.com:/opt/stacks/toolkit-staging/data/docker-entrypoint-initdb.d/* ./var/docker-entrypoint-initdb.d
 # rsync -avz feeldsparror.cubecinema.com:/opt/stacks/toolkit-staging/data/media/diary/* ./media/diary/
 ## TODO: sort/refactor the var directory 
+## TODO: add runtests to build pipeline
 
 
 # Exit on any error
