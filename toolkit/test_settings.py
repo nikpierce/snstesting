@@ -1,5 +1,5 @@
 import warnings
-from toolkit.devserver_settings import *
+from toolkit.settings_dev import *
 
 # At v2.8 the easy_thumbnails library sprouted an optional dependency on
 # svglib. Since there's no pressing need to support thumbnailing SVGs, and I
