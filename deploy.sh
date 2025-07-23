@@ -54,14 +54,16 @@ DOCKER_COMPOSE_DIR="/opt/stacks/toolkit-$DEPLOY_ENV"
 
 git archive --format=tgz -o "$ARCHIVE_FILE" "$COMMIT_HASH"
 rsync -avz --delete ./"$ARCHIVE_FILE" "$REMOTE_SERVER:$TOOLKIT_BASE_DIR/tmp"
-rm ./$ARCHIVE_FILE
+rm ./"$ARCHIVE_FILE"
 # unpack
 ssh "$REMOTE_SERVER" "rm -Rf '$CHECKOUT_DIR'/*"
 ssh "$REMOTE_SERVER" "tar -xzf '$TOOLKIT_BASE_DIR'/tmp/'$ARCHIVE_FILE' -C '$CHECKOUT_DIR'"
 
 # docker build # TODO: investigate if docker copmpose build makes sense
-# --no-cache to make sure updated filesystems are added, etc
-# pass in hardcoded UID of the toolkit user to simplify bind mount things. If someone wants to make this fancy and dynamic go for it
-ssh "$REMOTE_SERVER" "cd '$CHECKOUT_DIR' && docker build --build-arg ENV_NAME=$DEPLOY_ENV --build-arg TOOLKIT_UID=1004 --no-cache --tag toolkit:'$DEPLOY_ENV' ."
+# add --no-cache to make sure updated filesystems are added, etc. remove to significantly speed up build and create fewer hanging containers
+# pass in hardcoded UID of the toolkit user to simplify bind mount things. TODO: If someone wants to make this fancy and dynamic go for it
+echo "***************** build $DEPLOY_ENV image *****************"
+ssh "$REMOTE_SERVER" "cd '$CHECKOUT_DIR' && docker build --build-arg ENV_NAME=$DEPLOY_ENV --build-arg TOOLKIT_UID=1004 --tag toolkit:'$DEPLOY_ENV' ."
 
+echo "***************** start $DEPLOY_ENV container(s) *****************"
 ssh "$REMOTE_SERVER" "cd '$DOCKER_COMPOSE_DIR' && docker compose up --detach"
