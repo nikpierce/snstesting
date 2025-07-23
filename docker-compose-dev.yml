@@ -23,7 +23,7 @@ services:
       DB_NAME: "${DB_NAME:-toolkit}"
       DB_USER: "${DB_USER:-toolkit}"
       DB_PASSWORD: "${DB_PASSWORD:-devserver_db_password}"
-      DB_HOST: "toolkit_dev_db"
+      DB_HOST: "toolkit-dev-db"
       DB_PORT: "3306"
       SECRET_KEY: "${DJANGO_SECRET_KEY:-really_bad_django_secret_key}"
     ports:
