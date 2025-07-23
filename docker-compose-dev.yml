@@ -2,7 +2,7 @@
 services:
   mariadb:
     image: mariadb:10
-    container_name: toolkit_dev_db
+    container_name: toolkit-dev-db
     restart: on-failure
     environment:
       MARIADB_USER: "${DB_USER:-toolkit}"
@@ -17,7 +17,7 @@ services:
 
   toolkit:
     image: toolkit:dev
-    container_name: toolkit_dev_app
+    container_name: toolkit-dev-app
     restart: on-failure
     environment:
       DB_NAME: "${DB_NAME:-toolkit}"
