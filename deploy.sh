@@ -52,17 +52,18 @@ ARCHIVE_FILE="$DEPLOY_ENV"_code_export.tgz
 CHECKOUT_DIR="$TOOLKIT_BASE_DIR/checkout/$DEPLOY_ENV"
 DOCKER_COMPOSE_DIR="/opt/stacks/toolkit-$DEPLOY_ENV"
 
+echo "***************** build and send $DEPLOY_ENV archive *****************"
 git archive --format=tgz -o "$ARCHIVE_FILE" "$COMMIT_HASH"
 rsync -avz --delete ./"$ARCHIVE_FILE" "$TOOLKIT_REMOTE:$TOOLKIT_BASE_DIR/tmp"
 rm ./"$ARCHIVE_FILE"
 # unpack
+echo "***************** unpack $DEPLOY_ENV archive *****************"
 ssh "$TOOLKIT_REMOTE" "rm -Rf '$CHECKOUT_DIR'/*"
 ssh "$TOOLKIT_REMOTE" "tar -xzf '$TOOLKIT_BASE_DIR'/tmp/'$ARCHIVE_FILE' -C '$CHECKOUT_DIR'"
-
+echo Done.
 
 # run docker ops as own account. Requires the TOOLKIT group to access files and DOCKER group to run docker.
 # docker build # TODO: investigate if docker copmpose build makes sense
-# add --no-cache to make sure updated filesystems are added, etc. remove to significantly speed up build and create fewer hanging containers
 # pass in hardcoded UID of the toolkit user to simplify bind mount things. TODO: If someone wants to make this fancy and dynamic go for it
 echo "***************** build $DEPLOY_ENV image *****************"
 ssh "$REMOTE_SERVER" "cd '$CHECKOUT_DIR' && docker build --build-arg ENV_NAME=$DEPLOY_ENV --build-arg TOOLKIT_UID=1004 --tag toolkit:'$DEPLOY_ENV' ."
