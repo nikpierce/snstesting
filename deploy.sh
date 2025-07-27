@@ -4,15 +4,15 @@
 set -e
 
 #TODOs
-# Check whether the user's account has the right permissions / is in the right groups serverside.
-# Check whether server-side folders have the right permissions for GROUP write, including execute on the /home/toolkit directory
 # Tag the commit with the deploy environment. Check in. Will that break something if there's other changes on the vine?
 # Checkout the tag at the far end, ready for a docker-enabled account to do the rest.
 # Check whether the docker-compose directory, and the symlink to the compose file, already exists. Handle if not.
 
 #  vars
 REMOTE_SERVER="feeldsparror.cubecinema.com"
-TOOLKIT_BASE_DIR="/home/toolkit"
+TOOLKIT_USER="toolkit" ## run checkout tasks as toolkit, requires entry in authorized_keys.
+TOOLKIT_REMOTE="$TOOLKIT_USER@$REMOTE_SERVER"
+TOOLKIT_BASE_DIR="/home/$TOOLKIT_USER"
 
 # Get the current commit hash
 COMMIT_HASH=$(git rev-parse --short=10 HEAD)
@@ -53,12 +53,14 @@ CHECKOUT_DIR="$TOOLKIT_BASE_DIR/checkout/$DEPLOY_ENV"
 DOCKER_COMPOSE_DIR="/opt/stacks/toolkit-$DEPLOY_ENV"
 
 git archive --format=tgz -o "$ARCHIVE_FILE" "$COMMIT_HASH"
-rsync -avz --delete ./"$ARCHIVE_FILE" "$REMOTE_SERVER:$TOOLKIT_BASE_DIR/tmp"
+rsync -avz --delete ./"$ARCHIVE_FILE" "$TOOLKIT_REMOTE:$TOOLKIT_BASE_DIR/tmp"
 rm ./"$ARCHIVE_FILE"
 # unpack
-ssh "$REMOTE_SERVER" "rm -Rf '$CHECKOUT_DIR'/*"
-ssh "$REMOTE_SERVER" "tar -xzf '$TOOLKIT_BASE_DIR'/tmp/'$ARCHIVE_FILE' -C '$CHECKOUT_DIR'"
+ssh "$TOOLKIT_REMOTE" "rm -Rf '$CHECKOUT_DIR'/*"
+ssh "$TOOLKIT_REMOTE" "tar -xzf '$TOOLKIT_BASE_DIR'/tmp/'$ARCHIVE_FILE' -C '$CHECKOUT_DIR'"
 
+
+# run docker ops as own account. Requires the TOOLKIT group to access files and DOCKER group to run docker.
 # docker build # TODO: investigate if docker copmpose build makes sense
 # add --no-cache to make sure updated filesystems are added, etc. remove to significantly speed up build and create fewer hanging containers
 # pass in hardcoded UID of the toolkit user to simplify bind mount things. TODO: If someone wants to make this fancy and dynamic go for it
