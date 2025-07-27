@@ -25,8 +25,15 @@ case "$COMMAND" in
     mailerd)
         exec /venv/bin/python3 /site/manage.py mailerd
         ;;
+    localdev)
+        echo "Running database migrations"
+        /venv/bin/python3 /site/manage.py migrate
+        SECRET_KEY="X" /venv/bin/python3 /site/manage.py collectstatic --noinput --settings=toolkit.settings
+        export DJANGO_SETTINGS_MODULE=toolkit.settings_dev
+        /venv/bin/python3 /site/manage.py runserver 0.0.0.0:8000
+        ;;
     *)
-        echo "Unknown option; expected gunicorn or mailerd"
+        echo "Unknown option; expected gunicorn, mailerd or localdev"
         exit 5
         ;;
 esac
