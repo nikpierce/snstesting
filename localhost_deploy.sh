@@ -6,7 +6,6 @@
 #toolkit_dev_app  | WARNINGS:
 #toolkit_dev_app  | wagtailcore.WorkflowState: (models.W036) MariaDB does not support unique constraints with conditions.
 #toolkit_dev_app  |      HINT: A constraint won't be created. Silence this warning if you don't care about it.
-## TODO: Find a way through permissions to mount the entire /site directory for local dev work.
 ## TODO: Check whether the django log file is needed in dev. Find a way through the permissions to re-enable it.
 ## TODO:
 # sudo chown $USER:$USER ./var/docker-entrypoint-initdb.d
@@ -47,6 +46,13 @@ while ! $GOOD_OPT; do
 done
 
 DEPLOY_ENV=dev
+
+# create a symbolic link for settings.py. This shouldn't get checked in anywhere.
+if [ -L ./toolkit/settings.py ]; then
+    rm ./toolkit/settings.py
+fi
+
+ln -s ./settings_"${DEPLOY_ENV}".py ./toolkit/settings.py
 
 # docker build # TODO: investigate if docker copmpose build makes sense
 # add --no-cache to make sure updated filesystems are added, etc. remove to significantly speed up build.
