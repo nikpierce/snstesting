@@ -42,7 +42,7 @@ TEMPLATES[0]["OPTIONS"]["debug"] = True
 ALLOWED_HOSTS = ("127.0.0.1", "localhost")
 
 # Django toolbar things:
-INTERNAL_IPS = ("127.0.0.1",)
+INTERNAL_IPS = ("127.0.0.1",) # this doesn't work when running through a docker container. TODO.
 DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False,
 }
