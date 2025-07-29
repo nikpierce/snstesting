@@ -22,9 +22,7 @@ DATABASES = {
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os.environ.get("SECRET_KEY", "*@t05l5a7+uos5*9=c7ph1t#s(l*tlcdx(n(isztw^4w2c&mu-")
 
-# Disable the log file
-del LOGGING["handlers"]["file"]
-LOGGING["loggers"]["toolkit"]["handlers"] = ["console"]
+LOGGING["handlers"]["file"]["filename"] = "django_test.log"
 
 # Enable logging of *everything* to the console:
 LOGGING["root"] = {

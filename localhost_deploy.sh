@@ -6,7 +6,6 @@
 #toolkit_dev_app  | WARNINGS:
 #toolkit_dev_app  | wagtailcore.WorkflowState: (models.W036) MariaDB does not support unique constraints with conditions.
 #toolkit_dev_app  |      HINT: A constraint won't be created. Silence this warning if you don't care about it.
-## TODO: Check whether the django log file is needed in dev. Find a way through the permissions to re-enable it.
 ## TODO:
 # sudo chown $USER:$USER ./var/docker-entrypoint-initdb.d
 # rsync -avz feeldsparror.cubecinema.com:/opt/stacks/toolkit-staging/data/docker-entrypoint-initdb.d/* ./var/docker-entrypoint-initdb.d
