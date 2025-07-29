@@ -36,8 +36,9 @@ LOGGING['root'] = {
 # The following are the lucky recipients of error emails
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
-    ('Ben Motz', 'ben@cubecinema.com'),
-    ('Marcus Valentine', 'marcus@marcusv.org'),
+    # ('Ben Motz', 'ben@cubecinema.com'),
+    # ('Marcus Valentine', 'marcus@marcusv.org'),
+    ('Alan Harris', 'email@alanoharris.com'),
 )
 
 SERVER_EMAIL = "toolkit_staging_errors@cubecinema.com"
