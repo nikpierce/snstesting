@@ -46,12 +46,7 @@ COPY . /site/
 RUN ln -s /site/toolkit/settings_$ENV_NAME.py /site/toolkit/settings.py
 ## create container account with UID+GID of server account or localhost user
 RUN adduser --uid $TOOLKIT_UID --no-create-home --disabled-login --gecos x toolkit
-RUN chown -R toolkit:toolkit /site/ \
-     && install -D --owner=toolkit --group=toolkit --directory /site/media/diary \
-     && install -D --owner=toolkit --group=toolkit --directory /site/media/documents \
-     && install -D --owner=toolkit --group=toolkit --directory /site/media/images \
-     && install -D --owner=toolkit --group=toolkit --directory /site/media/printedprogramme \
-     && install -D --owner=toolkit --group=toolkit --directory /site/media/volunteers
+RUN chown -R toolkit:toolkit /site/
 
 # app/service user, which runs...
 USER toolkit
@@ -59,8 +54,3 @@ USER toolkit
 ENTRYPOINT [ "/site/containerconfig/tk_run.sh" ]
 # ...default param. Can be overriden in docker CLI or compose
 CMD [ "gunicorn" ]
-
-VOLUME ["/site/media"]
-VOLUME ["/log/"]
-
-EXPOSE 8000
