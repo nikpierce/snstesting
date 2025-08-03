@@ -7,11 +7,9 @@
 #toolkit_dev_app  | wagtailcore.WorkflowState: (models.W036) MariaDB does not support unique constraints with conditions.
 #toolkit_dev_app  |      HINT: A constraint won't be created. Silence this warning if you don't care about it.
 ## TODO:
-# sudo chown $USER:$USER ./var/docker-entrypoint-initdb.d
 # rsync -avz feeldsparror.cubecinema.com:/opt/stacks/toolkit-staging/data/docker-entrypoint-initdb.d/* ./var/docker-entrypoint-initdb.d
 # rsync -avz feeldsparror.cubecinema.com:/opt/stacks/toolkit-staging/data/media/diary/* ./media/diary/
-## TODO: sort/refactor the var directory 
-## TODO: add runtests to build pipeline
+## TODO: an automated way of getting DB and media files
 
 
 # Exit on any error
@@ -53,10 +51,13 @@ fi
 
 ln -s ./settings_"${DEPLOY_ENV}".py ./toolkit/settings.py
 
-# docker build # TODO: investigate if docker copmpose build makes sense
-# add --no-cache to make sure updated filesystems are added, etc. remove to significantly speed up build.
 # pass in the $UID of the current user to re-use as internal uid, for bind mounts
 docker build --build-arg ENV_NAME="$DEPLOY_ENV" --build-arg TOOLKIT_UID="$UID" --tag toolkit:"$DEPLOY_ENV" .
+
+## run django tests against the image
+## ideally, this would be run on each repo *commit*, not when starting up dev tools. But that requires more of a ci/cd pipeline.
+## TODO: make this a feature toggle so it can be switched off (or on) if preferred.
+docker run -t --rm --entrypoint "/site/runtests_container.sh" toolkit:dev
 
 # --detach
 docker compose -f ./docker-compose-"$DEPLOY_ENV".yml up

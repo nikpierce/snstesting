@@ -10,7 +10,7 @@ services:
     volumes:
       - type: bind
         source: ./data/docker-entrypoint-initdb.d/
-        target: /docker-entrypoint-initdb.d/   ## scripts run during startup of new containers.
+        target: /docker-entrypoint-initdb.d/   ## scripts run during init of new mysql/mariadb
       - type: bind
         source: ./data/mariadb
         target: /var/lib/mysql

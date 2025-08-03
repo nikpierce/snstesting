@@ -27,7 +27,7 @@ services:
     networks:
       - toolkit_production
     image: toolkit:production
-    command: ["mailerd"]  ## override default ENTRYPOINT/CMD argument in Dockerfile
+    command: ["mailerd"]  ## override default CMD value in Dockerfile
     restart: on-failure
     volumes:
       - type: bind

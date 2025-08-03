@@ -6,7 +6,10 @@ set -e
 #TODOs
 # Tag the commit with the deploy environment. Check in. Will that break something if there's other changes on the vine?
 # Checkout the tag at the far end, ready for a docker-enabled account to do the rest.
+# Investigate if 'docker compose build' is better than 'docker build'
 # Check whether the docker-compose directory, and the symlink to the compose file, already exists. Handle if not.
+# There's a potential sequencing bug, where if something fails after the checkout (e.g image build), then the live symlink to the docker-compose-### is pointing to the 'wrong' file. One fix is to copy the file instead of symlink. This opens new permissions questions.
+# add django unit tests (runtests) check to non-dev deployment steps.
 
 #  vars
 REMOTE_SERVER="feeldsparror.cubecinema.com"
@@ -64,10 +67,7 @@ echo Done.
 
 # docker build
 # run docker ops as own account. Requires the TOOLKIT group to access files and DOCKER group to run docker.
-# TODO: investigate if 'docker copmpose build' makes sense
 # pass in hardcoded UID of the toolkit user to simplify bind mount things. TODO: If someone wants to make this fancy and dynamic go for it
-# TODO: There's a potential sequencing bug, where if something fails after the checkout (e.g image build), then the live symlink to the docker-compose-### is pointing to the 'wrong' file. One fix is to copy the file instead of symlink. This opens new permissions questions.
-
 echo "***************** build $DEPLOY_ENV image *****************"
 ssh "$REMOTE_SERVER" "cd '$CHECKOUT_DIR' && docker build --build-arg ENV_NAME=$DEPLOY_ENV --build-arg TOOLKIT_UID=1004 --tag toolkit:'$DEPLOY_ENV' ."
 
