@@ -62,9 +62,12 @@ ssh "$TOOLKIT_REMOTE" "rm -Rf '$CHECKOUT_DIR'/*"
 ssh "$TOOLKIT_REMOTE" "tar -xzf '$TOOLKIT_BASE_DIR'/tmp/'$ARCHIVE_FILE' -C '$CHECKOUT_DIR'"
 echo Done.
 
+# docker build
 # run docker ops as own account. Requires the TOOLKIT group to access files and DOCKER group to run docker.
-# docker build # TODO: investigate if docker copmpose build makes sense
+# TODO: investigate if 'docker copmpose build' makes sense
 # pass in hardcoded UID of the toolkit user to simplify bind mount things. TODO: If someone wants to make this fancy and dynamic go for it
+# TODO: There's a potential sequencing bug, where if something fails after the checkout (e.g image build), then the live symlink to the docker-compose-### is pointing to the 'wrong' file. One fix is to copy the file instead of symlink. This opens new permissions questions.
+
 echo "***************** build $DEPLOY_ENV image *****************"
 ssh "$REMOTE_SERVER" "cd '$CHECKOUT_DIR' && docker build --build-arg ENV_NAME=$DEPLOY_ENV --build-arg TOOLKIT_UID=1004 --tag toolkit:'$DEPLOY_ENV' ."
 
