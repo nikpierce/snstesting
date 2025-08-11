@@ -61,7 +61,8 @@ rsync -avz --delete ./"$ARCHIVE_FILE" "$TOOLKIT_REMOTE:$TOOLKIT_BASE_DIR/tmp"
 rm ./"$ARCHIVE_FILE"
 # unpack
 echo "***************** unpack $DEPLOY_ENV archive *****************"
-ssh "$TOOLKIT_REMOTE" "rm -Rf '$CHECKOUT_DIR'/*"
+ssh "$TOOLKIT_REMOTE" "if [ -d '${CHECKOUT_DIR}' ]; then rm -Rf '$CHECKOUT_DIR'; fi"
+ssh "$TOOLKIT_REMOTE" "if [ ! -d '${CHECKOUT_DIR}' ]; then mkdir '$CHECKOUT_DIR'; fi"
 ssh "$TOOLKIT_REMOTE" "tar -xzf '$TOOLKIT_BASE_DIR'/tmp/'$ARCHIVE_FILE' -C '$CHECKOUT_DIR'"
 echo Done.
 

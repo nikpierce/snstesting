@@ -9,10 +9,10 @@ services:
       MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
     volumes:
       - type: bind
-        source: ./data/docker-entrypoint-initdb.d/
+        source: "/opt/stacks/toolkit-${ENV}/data/docker-entrypoint-initdb.d/"
         target: /docker-entrypoint-initdb.d/   ## scripts run during init of new mysql/mariadb
       - type: bind
-        source: ./data/mariadb
+        source: "/opt/stacks/toolkit-${ENV}/data/mariadb"
         target: /var/lib/mysql
 
   toolkit:
@@ -35,5 +35,5 @@ services:
       EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
     volumes:
       - type: bind
-        source: ./data/media/
+        source: "/opt/stacks/toolkit-${ENV}/data/media/"
         target: /site/media/
