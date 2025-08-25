@@ -37,20 +37,19 @@ services:
         source: "/opt/stacks/toolkit-${ENV}/data/media/"
         target: /site/media/
 
-## commenting out mailerd until ready for formal testing... just in case...
-#  mailer:
-#    image: toolkit:${ENV}
-#    container_name: toolkit-${ENV}-mailerd
-#    command: ["mailerd"]  ## override default CMD value in Dockerfile
-#    restart: on-failure
-#    environment: 
-#      DB_NAME: "${DB_NAME}"
-#      DB_USER: "${DB_USER}"
-#      DB_PASSWORD: "${DB_PASSWORD}"
-#      DB_HOST: "toolkit-${ENV}-mariadb"
-#      DB_PORT: "3306"
-#      SECRET_KEY: "${DJANGO_SECRET_KEY:-really_bad_django_secret_key}"
-#      EMAIL_HOST: "${EMAIL_HOST}"
-#      EMAIL_PORT: "${EMAIL_PORT}"
-#      EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
-#      EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
+  mailer:
+    image: toolkit:${ENV}
+    container_name: toolkit-${ENV}-mailerd
+    command: ["mailerd"]  ## override default CMD value in Dockerfile
+    restart: on-failure
+    environment: 
+      DB_NAME: "${DB_NAME}"
+      DB_USER: "${DB_USER}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_HOST: "toolkit-${ENV}-mariadb"
+      DB_PORT: "3306"
+      SECRET_KEY: "${DJANGO_SECRET_KEY:-really_bad_django_secret_key}"
+      EMAIL_HOST: "${EMAIL_HOST}"
+      EMAIL_PORT: "${EMAIL_PORT}"
+      EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
+      EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"

@@ -52,10 +52,10 @@ CSRF_COOKIE_SECURE = True
 # See https://docs.djangoproject.com/en/1.11/ref/clickjacking/ for a fix
 # X_FRAME_OPTIONS = 'DENY'
  
-EMAIL_HOST =
-EMAIL_PORT =
-EMAIL_HOST_USER =
-EMAIL_HOST_PASSWORD =
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 CSRF_TRUSTED_ORIGINS = [
     "https://cubecinema.com",
