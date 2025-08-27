@@ -1,0 +1,35 @@
+# This compose file is for development and test, not for production deployment!
+services:
+  mariadb:
+    image: mariadb:10
+    container_name: toolkit-dev-db
+    restart: on-failure
+    environment:
+      MARIADB_USER: "${DB_USER:-toolkit}"
+      MARIADB_PASSWORD: "${DB_PASSWORD:-devserver_db_password}"
+      MARIADB_ROOT_PASSWORD: rubbishpassword
+      MARIADB_DATABASE: "${DB_NAME:-toolkit}"
+      SECRET_KEY: "${DJANGO_SECRET_KEY:-really_bad_django_secret_key}"
+    volumes:
+      - type: bind
+        source: ./var/docker-entrypoint-initdb.d/
+        target: /docker-entrypoint-initdb.d/   ## scripts run during init of new mysql/mariadb
+
+  toolkit:
+    image: toolkit:dev
+    container_name: toolkit-dev-app
+    restart: on-failure
+    command: ["localdev"]  ## override default CMD value in Dockerfile
+    environment:
+      DB_NAME: "${DB_NAME:-toolkit}"
+      DB_USER: "${DB_USER:-toolkit}"
+      DB_PASSWORD: "${DB_PASSWORD:-devserver_db_password}"
+      DB_HOST: "toolkit-dev-db"
+      DB_PORT: "3306"
+      SECRET_KEY: "${DJANGO_SECRET_KEY:-really_bad_django_secret_key}"
+    ports:
+      - 127.0.0.1:8000:8000
+    volumes:
+      - type: bind
+        source: ./
+        target: /site/

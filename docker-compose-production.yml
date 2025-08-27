@@ -1,39 +1,55 @@
-version: "3.7"
-networks:
-  toolkit_production:
-    driver: bridge
 services:
+  mariadb:
+    image: mariadb:10
+    container_name: toolkit-${ENV}-mariadb
+    environment:
+      MARIADB_DATABASE: "${DB_NAME}"
+      MARIADB_USER: "${DB_USER}"
+      MARIADB_PASSWORD: "${DB_PASSWORD}"
+      MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+    volumes:
+      - type: bind
+        source: "/opt/stacks/toolkit-${ENV}/data/docker-entrypoint-initdb.d/"
+        target: /docker-entrypoint-initdb.d/   ## scripts run during init of new mysql/mariadb
+      - type: bind
+        source: "/opt/stacks/toolkit-${ENV}/data/mariadb"
+        target: /var/lib/mysql
+
   toolkit:
-    user: "1001:1001"
-    networks:
-      - toolkit_production
-    image: toolkit:production
-    build: .
-    command: ["tk_run", "gunicorn"]
+    image: toolkit:${ENV}
+    container_name: toolkit-${ENV}-app
     restart: on-failure
     ports:
-      - "127.0.0.1:7191:8000"
+      - "127.0.0.1:8002:8000"
+    environment: 
+      DB_NAME: "${DB_NAME}"
+      DB_USER: "${DB_USER}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_HOST: "toolkit-${ENV}-mariadb"
+      DB_PORT: "3306"
+      SECRET_KEY: "${DJANGO_SECRET_KEY:-really_bad_django_secret_key}"
+      EMAIL_HOST: "${EMAIL_HOST}"
+      EMAIL_PORT: "${EMAIL_PORT}"
+      EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
+      EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
     volumes:
       - type: bind
-        source: /home/toolkit/site/media/
+        source: "/opt/stacks/toolkit-${ENV}/data/media/"
         target: /site/media/
-      - type: bind
-        source: /var/run/mysqld/mysqld.sock
-        target: /var/run/mysqld/mysqld.sock
-      - type: bind
-        source: /home/toolkit/settings_docker_production.py
-        target: /site/toolkit/settings.py
+
   mailer:
-    user: "1001:1001"
-    networks:
-      - toolkit_production
-    image: toolkit:production
-    command: ["tk_run", "mailerd"]
+    image: toolkit:${ENV}
+    container_name: toolkit-${ENV}-mailerd
+    command: ["mailerd"]  ## override default CMD value in Dockerfile
     restart: on-failure
-    volumes:
-      - type: bind
-        source: /var/run/mysqld/mysqld.sock
-        target: /var/run/mysqld/mysqld.sock
-      - type: bind
-        source: /home/toolkit/settings_docker_production.py
-        target: /site/toolkit/settings.py
+    environment: 
+      DB_NAME: "${DB_NAME}"
+      DB_USER: "${DB_USER}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_HOST: "toolkit-${ENV}-mariadb"
+      DB_PORT: "3306"
+      SECRET_KEY: "${DJANGO_SECRET_KEY:-really_bad_django_secret_key}"
+      EMAIL_HOST: "${EMAIL_HOST}"
+      EMAIL_PORT: "${EMAIL_PORT}"
+      EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
+      EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"

@@ -19,13 +19,21 @@ case "$COMMAND" in
     gunicorn)
         echo "Running database migrations"
         /venv/bin/python3 /site/manage.py migrate
+        SECRET_KEY="X" /venv/bin/python3 /site/manage.py collectstatic --noinput --settings=toolkit.settings
         exec /venv/bin/gunicorn wsgi --bind 0.0.0.0:8000 --chdir /site
         ;;
     mailerd)
         exec /venv/bin/python3 /site/manage.py mailerd
         ;;
+    localdev)
+        echo "Running database migrations"
+        /venv/bin/python3 /site/manage.py migrate
+        SECRET_KEY="X" /venv/bin/python3 /site/manage.py collectstatic --noinput --settings=toolkit.settings
+        export DJANGO_SETTINGS_MODULE=toolkit.settings
+        /venv/bin/python3 /site/manage.py runserver 0.0.0.0:8000
+        ;;
     *)
-        echo "Unknown option; expected gunicorn or mailerd"
+        echo "Unknown option; expected gunicorn, mailerd or localdev"
         exit 5
         ;;
 esac

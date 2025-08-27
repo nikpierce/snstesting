@@ -1,5 +1,9 @@
 FROM debian:bookworm AS base
 
+## passed in from commandline
+ARG ENV_NAME
+ARG TOOLKIT_UID
+
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && apt-get install --yes --no-install-recommends \
   python3 \
@@ -26,34 +30,27 @@ WORKDIR "/build"
 COPY ./requirements ./requirements/
 
 RUN mkdir --parents /build/wheels/ \
-    && pip wheel --wheel-dir /build/wheels/ -r /build/requirements/docker.txt
+    && pip wheel --wheel-dir /build/wheels/ -r /build/requirements/$ENV_NAME.txt
 
 ## Deployment image
 FROM base AS run
 
-COPY --from=build /build/wheels /wheels/
-
 WORKDIR "/site"
 
-RUN adduser --no-create-home --disabled-login --gecos x toolkit \
-    && python3 -m venv /venv \
+COPY --from=build /build/wheels /wheels/
+RUN python3 -m venv /venv \
     && /venv/bin/pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
     && rm -rf /wheels/
 
-COPY --chown=toolkit:toolkit . /site/
+COPY . /site/
+RUN ln -s /site/toolkit/settings_$ENV_NAME.py /site/toolkit/settings.py
+## create container account with UID+GID of server account or localhost user
+RUN adduser --uid $TOOLKIT_UID --no-create-home --disabled-login --gecos x toolkit
+RUN chown -R toolkit:toolkit /site/
 
-RUN ln -s /site/containerconfig/tk_run.sh /usr/local/bin/tk_run \
-     && ln -s /site/toolkit/docker_settings.py /site/toolkit/settings.py \
-     && SECRET_KEY="X" /venv/bin/python3 /site/manage.py collectstatic --noinput --settings=toolkit.docker_settings \
-     && install -D --owner=toolkit --group=toolkit --directory /site/media/diary \
-     && install -D --owner=toolkit --group=toolkit --directory /site/media/documents \
-     && install -D --owner=toolkit --group=toolkit --directory /site/media/images \
-     && install -D --owner=toolkit --group=toolkit --directory /site/media/printedprogramme \
-     && install -D --owner=toolkit --group=toolkit --directory /site/media/volunteers
-
-USER toolkit:toolkit
-
-VOLUME ["/site/media"]
-VOLUME ["/log/"]
-
-EXPOSE 8000
+# app/service user, which runs...
+USER toolkit
+# ... startup script, with the...
+ENTRYPOINT [ "/site/containerconfig/tk_run.sh" ]
+# ...default param. Can be overriden in docker CLI or compose
+CMD [ "gunicorn" ]
