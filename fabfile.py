@@ -8,7 +8,7 @@ from invoke.exceptions import Exit
 IMAGE_REPOSITORY = "toolkit"
 IMAGE_BUILD_DIR = "tmp_toolkit_deploy_{}"
 
-DEFAULT_HOST = "cubecinema.com"
+DEFAULT_HOST = "feeldsparror.cubecinema.com"
 
 
 def _assert_target_set(c):
@@ -45,7 +45,7 @@ def cube_staging(c):
     c.config.media = "/home/staging/site/media/"
     c.config.docker_image_tag = "staging"
     c.config.docker_compose_file = "docker-compose-staging.yml"
-    c.config.docker_compose_project = "toolkit_staging"
+    c.config.docker_compose_project = "toolkit-staging"
     c.config.media_user = "staging"
 
 
@@ -57,7 +57,7 @@ def cube_production(c):
     c.config.media = "/home/toolkit/site/media/"
     c.config.docker_image_tag = "production"
     c.config.docker_compose_file = "docker-compose-production.yml"
-    c.config.docker_compose_project = "toolkit_production"
+    c.config.docker_compose_project = "toolkit-production"
     c.config.media_user = "toolkit"
 
 
@@ -186,12 +186,16 @@ def fetch_database_dump(c, dump_filename="database_dump.sql"):
     # Ask manage.py in the toolkit container for the mysqldump command to run
     # (which will include the DB name, user and password)
     dump_command = c.run(
-        f"docker exec {c.config.docker_compose_project}_toolkit_1 "
+        f"docker exec {c.config.docker_compose_project}-app "
         "/venv/bin/python3 manage.py mysqldump_database --print-command STDOUT",
         hide=True,
     ).stdout.strip()
 
-    c.run(f"{dump_command} | gzip > {dump_file_gz}", hide=True)
+    c.run(
+        f"docker exec {c.config.docker_compose_project}-mariadb "
+        f"{dump_command} | gzip > {dump_file_gz}",
+        hide=True,
+    )
 
     print("Downloading database dump")
     c.get(dump_file_gz, local=dump_file_gz)
