@@ -21,7 +21,7 @@ services:
     restart: on-failure
     ports:
       - "127.0.0.1:8002:8000"
-    environment: 
+    environment:
       DB_NAME: "${DB_NAME}"
       DB_USER: "${DB_USER}"
       DB_PASSWORD: "${DB_PASSWORD}"
@@ -42,7 +42,7 @@ services:
     container_name: toolkit-${ENV}-mailerd
     command: ["mailerd"]  ## override default CMD value in Dockerfile
     restart: on-failure
-    environment: 
+    environment:
       DB_NAME: "${DB_NAME}"
       DB_USER: "${DB_USER}"
       DB_PASSWORD: "${DB_PASSWORD}"
