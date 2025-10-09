@@ -5,22 +5,24 @@ from toolkit.settings_common import *
 # environment values are passed in from docker
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
         "NAME": os.environ.get("DB_NAME", "toolkit"),
         "USER": os.environ.get("DB_USER", "toolkit"),
         "PASSWORD": os.environ.get("DB_PASSWORD", "devserver_db_password"),
         "HOST": os.environ.get("DB_HOST", "localhost"),
         "PORT": os.environ.get("DB_PORT", "3306"),
-        'CONN_MAX_AGE': 10, # Allow DB connections to persist for 10 seconds
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        "CONN_MAX_AGE": 10,  # Allow DB connections to persist for 10 seconds
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = os.environ.get("SECRET_KEY", "*@t05l5a7+uos5*9=c7ph1t#s(l*tlcdx(n(isztw^4w2c&mu-")
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", "*@t05l5a7+uos5*9=c7ph1t#s(l*tlcdx(n(isztw^4w2c&mu-"
+)
 
 LOGGING["handlers"]["file"]["filename"] = "django_test.log"
 
@@ -40,7 +42,9 @@ TEMPLATES[0]["OPTIONS"]["debug"] = True
 ALLOWED_HOSTS = ("127.0.0.1", "localhost")
 
 # Django toolbar things:
-INTERNAL_IPS = ("127.0.0.1",) # this doesn't work when running through a docker container. TODO.
+INTERNAL_IPS = (
+    "127.0.0.1",
+)  # this doesn't work when running through a docker container. TODO.
 DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False,
 }
