@@ -1,11 +1,11 @@
 <div class='ckeditor_django_wrapper'>
 <textarea name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>{% if widget.value %}{{ widget.value }}{% endif %}</textarea>
 </div>
-<script type='text/javascript'>
+<script>
 CKEDITOR.replace('{{ widget.attrs.id }}',{
 {% if widget.height %}height:'{{ widget.height }}',{% endif %}
 {% if not widget.enable_iframes %}disallowedContent: 'iframe',{% endif %}
 removePlugins: '{{ widget.enable_tables|yesno:",table" }},{{ widget.enable_iframes|yesno:",youtube" }}',
-extraAllowedContent: 'img[src,alt];{{ widget.enable_tables|yesno:"td[colspan];hr," }};{{ widget.enable_iframes|yesno:"iframe[*]," }}'
+extraAllowedContent: 'img[src,alt] ; {{ widget.enable_tables|yesno:"td[colspan] ; hr ; ," }}{{ widget.enable_iframes|yesno:"iframe[*] ; *[referrerpolicy]," }}'
 });
 </script>
