@@ -46,4 +46,4 @@ License
 
 Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
 
-ckeditor 4 lts ("long term support") is available under the terms of the extended support model.
+For licensing, see LICENSE.md or [https://ckeditor.com/legal/ckeditor-oss-license](https://ckeditor.com/legal/ckeditor-oss-license)
