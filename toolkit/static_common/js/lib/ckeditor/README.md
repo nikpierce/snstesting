@@ -1,3 +1,32 @@
+# Rebuild of CKEditor 4.22.1 with patched youtube plugin
+
+To build the package used here:
+
+    TOOLKIT_CHECKOUT=$PWD/cubetoolkit
+    mkdir my_work_dir && cd my_work_dir
+    # Install JDK 15 (if you don't have it already)
+    wcurl https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-x64_bin.tar.gz
+    tar -xzf openjdk-15.0.2_linux-x64_bin.tar.gz
+    export PATH=$PWD/jdk-15.0.2/bin/:$PATH
+    # Clone CKEditor 4 and checkout the last OSS commit:
+    git clone https://github.com/ckeditor/ckeditor4.git --branch=4.22.1
+    # Clone cheap and cheerfully updated youtube plugin, and copy the relevant bit into place:
+    git clone https://github.com/BenMotz/ckeditor-youtube-plugin.git
+    cp -r ckeditor-youtube-plugin/youtube/ ckeditor4/plugins/
+    # configure the CKEditor build:
+    cp $TOOLKIT_CHECKOUT/static/js/lib/ckeditor/build-config.js ckeditor4/dev/builder/build-config.js
+    # build CKEditor
+    cd ckeditor4
+    ./dev/builder/build.sh
+    cd ..
+    # Copy it into place
+    rsync -av ckeditor4/dev/builder/release/ckeditor/ $TOOLKIT_CHECKOUT/toolkit/static_common/js/lib/ckeditor/
+    # clean up some of the mess
+    cd $TOOLKIT_CHECKOUT/toolkit/static_common/js/lib/ckeditor/
+    git checkout -- config.js
+    git clean -f .
+    # This should now be working. Possibly. Do a cautious git diff, see how it looks, try it out, etc.
+
 # CKEditor 4 LTS - Smart WYSIWYG HTML editor [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Check%20out%20CKEditor%204%20on%20GitHub&url=https%3A%2F%2Fgithub.com%2Fckeditor%2Fckeditor4)
 
 [![npm version](https://badge.fury.io/js/ckeditor4.svg)](https://www.npmjs.com/package/ckeditor4)
