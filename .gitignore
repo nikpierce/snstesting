@@ -2,7 +2,8 @@
 *.log
 venv
 venv26
-media
+media/*
+!/media/.gitkeep
 site_transfer.tgz
 toolkit/settings.py
 static/*
